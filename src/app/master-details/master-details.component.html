@@ -1,0 +1,87 @@
+<mat-table [dataSource]="countries" matSort class="mat-elevation-z8" multiTemplateDataRows>
+  <ng-container matColumnDef="flag">
+    <mat-header-cell *matHeaderCellDef> Flag </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <img src="{{element.flag}}" style="width: 40px; height: 20px;" />
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Country Name </mat-header-cell>
+    <mat-cell *matCellDef="let element"><mat-icon>chevron_right</mat-icon> {{element.name}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="capital">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Capital </mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.capital}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="region">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Region </mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.region}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="population">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Population </mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.population}}</mat-cell>
+  </ng-container>
+
+  <!-- <ng-container matColumnDef="expandedDetail">
+    <mat-cell *matCellDef="let detail" *ngTemplateOutlet="nestedTable; context: { datasource: detail.languages }">
+
+    </mat-cell>
+  </ng-container> -->
+  <ng-container matColumnDef="expandedDetail">
+    <mat-cell *matCellDef="let detail">
+      <div style="padding-left:200px">
+        <table style="border-collapse: collapse; border: 1px solid black;">
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Native Name</th>
+          </tr>
+          <tr *ngFor="let entity of detail.languages; let i = index">
+            <td>{{entity.iso639_2}}</td>
+            <td>{{entity.name}}</td>
+            <td>{{entity.nativeName}}</td>
+          </tr>
+        </table>
+      </div>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="countryColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: countryColumns;" matRipple class="element-row"
+    [class.expanded]="row.displayDetails" (click)="setDetailRow(row, !row.displayDetails)"></mat-row>
+
+  <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
+    [@detailExpand]="row.displayDetails ? 'expanded' : 'collapsed'" style="overflow: hidden">
+  </mat-row>
+
+</mat-table>
+
+<mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+</mat-paginator>
+
+<ng-template #nestedTable let-datasource="datasource">
+  <mat-table [dataSource]="datasource">
+
+    <ng-container matColumnDef="iso639_2">
+      <mat-header-cell *matHeaderCellDef> Code </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.iso639_2}}</mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="nativeName">
+      <mat-header-cell *matHeaderCellDef> Native Name </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.nativeName}}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="languageColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: languageColumns;"></mat-row>
+  </mat-table>
+</ng-template>
