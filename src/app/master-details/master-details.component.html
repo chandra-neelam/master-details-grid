@@ -1,4 +1,4 @@
-<mat-table [dataSource]="countries" matSort class="mat-elevation-z8" multiTemplateDataRows>
+<mat-table [dataSource]="countries" matSort class="mat-elevation-z8 parent-table" multiTemplateDataRows>
   <ng-container matColumnDef="flag">
     <mat-header-cell *matHeaderCellDef> Flag </mat-header-cell>
     <mat-cell *matCellDef="let element">
@@ -26,27 +26,12 @@
     <mat-cell *matCellDef="let element">{{element.population}}</mat-cell>
   </ng-container>
 
-  <!-- <ng-container matColumnDef="expandedDetail">
-    <mat-cell *matCellDef="let detail" *ngTemplateOutlet="nestedTable; context: { datasource: detail.languages }">
-
-    </mat-cell>
-  </ng-container> -->
   <ng-container matColumnDef="expandedDetail">
     <mat-cell *matCellDef="let detail">
-      <div style="padding-left:200px">
-        <table style="border-collapse: collapse; border: 1px solid black;">
-          <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Native Name</th>
-          </tr>
-          <tr *ngFor="let entity of detail.languages; let i = index">
-            <td>{{entity.iso639_2}}</td>
-            <td>{{entity.name}}</td>
-            <td>{{entity.nativeName}}</td>
-          </tr>
-        </table>
-      </div>
+      <div style="width: 100%;margin:10px 50px;">
+      <ng-container matColumnDef="expandedDetail" *ngTemplateOutlet="nestedTable; context: { datasource: detail.languages }">
+      </ng-container>
+    </div>
     </mat-cell>
   </ng-container>
 
@@ -64,7 +49,7 @@
 </mat-paginator>
 
 <ng-template #nestedTable let-datasource="datasource">
-  <mat-table [dataSource]="datasource">
+  <mat-table [dataSource]="datasource" class="child-table">
 
     <ng-container matColumnDef="iso639_2">
       <mat-header-cell *matHeaderCellDef> Code </mat-header-cell>

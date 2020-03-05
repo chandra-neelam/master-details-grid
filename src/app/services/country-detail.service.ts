@@ -8,7 +8,8 @@ export class CountryDetailService {
     }
 
     getCountries() {
-        const url = 'https://restcountries.eu/rest/v2/all';
+        //const url = 'https://restcountries.eu/rest/v2/all';
+        const url = 'assets/countries.json';
         return this.httpService.get<Country[]>(url);
     }
 }
