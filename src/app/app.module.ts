@@ -14,7 +14,8 @@ import { MasterDetailsComponent } from './master-details/master-details.componen
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatRippleModule } from '@angular/material/core';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import {MatIconModule} from '@angular/material/icon';
     MatSortModule,
     MatIconModule,
     MatRippleModule,
+    MatCheckboxModule,
     RouterModule.forRoot(routes)
   ],
   providers: [

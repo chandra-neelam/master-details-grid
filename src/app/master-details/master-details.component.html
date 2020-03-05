@@ -8,7 +8,7 @@
 
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Country Name </mat-header-cell>
-    <mat-cell *matCellDef="let element"><mat-icon>chevron_right</mat-icon> {{element.name}}</mat-cell>
+    <mat-cell *matCellDef="let element"><mat-icon>chevron_right</mat-icon> <mat-checkbox>{{element.name}}</mat-checkbox></mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="capital">
@@ -50,6 +50,11 @@
 
 <ng-template #nestedTable let-datasource="datasource">
   <mat-table [dataSource]="datasource" class="child-table">
+
+    <ng-container matColumnDef="actionColumn">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let element"><mat-checkbox></mat-checkbox></mat-cell>
+    </ng-container>
 
     <ng-container matColumnDef="iso639_2">
       <mat-header-cell *matHeaderCellDef> Code </mat-header-cell>

@@ -20,7 +20,7 @@ import { trigger, style, state, animate, transition } from '@angular/animations'
 })
 export class MasterDetailsComponent implements OnInit {
   countryColumns = ['name', 'capital', 'region', 'population', 'flag'];
-  languageColumns = ['iso639_2', 'name', 'nativeName'];
+  languageColumns = ['actionColumn', 'iso639_2', 'name', 'nativeName'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
