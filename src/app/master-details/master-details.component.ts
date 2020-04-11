@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { CountryDetailService } from '../services/country-detail.service';
-import { Country } from '../model/country-model';
+import { Country, CountrySearchCriteria } from '../model/country-model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { trigger, style, state, animate, transition } from '@angular/animations';
+import { CountrySearchService } from '../services/country-search.service';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'master-details',
@@ -18,20 +20,34 @@ import { trigger, style, state, animate, transition } from '@angular/animations'
     ]),
   ]
 })
-export class MasterDetailsComponent implements OnInit {
+export class MasterDetailsComponent implements OnInit, OnDestroy {
   countryColumns = ['name', 'capital', 'region', 'population', 'flag'];
   languageColumns = ['actionColumn', 'iso639_2', 'name', 'nativeName'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  countries: MatTableDataSource<Country>;
+  countryDataSource: MatTableDataSource<Country>;
+  countries: Array<Country>;
+  searchSubscription: Subscription;
 
-  constructor(private countryDetailService: CountryDetailService) {
+  constructor(private countryDetailService: CountryDetailService,
+    private countrySearchService: CountrySearchService) {
+    this.searchSubscription = this.countrySearchService.subscribeSearch()
+      .subscribe(searchCriteria => {
+        this.filterCountries(searchCriteria);
+      });
   }
 
   ngOnInit(): void {
     this.loadCountries();
   }
+
+  private filterCountries(searchCriteria: CountrySearchCriteria) {
+    var filteredCountries = this.countries.filter(x => (!searchCriteria.countryName || x.name.toUpperCase().startsWith(searchCriteria.countryName.toUpperCase())) && (!searchCriteria.population || x.population > searchCriteria.population));
+    this.countryDataSource.data = filteredCountries;
+    this.countryDataSource.connect().next(filteredCountries);
+  }
+
 
   private loadCountries() {
     this.countryDetailService.getCountries().subscribe(data => {
@@ -39,9 +55,10 @@ export class MasterDetailsComponent implements OnInit {
         data.forEach(x => {
           x.displayDetails = false;
         });
-        this.countries = new MatTableDataSource<Country>(data);
-        this.countries.paginator = this.paginator;
-        this.countries.sort = this.sort;
+        this.countries = data;
+        this.countryDataSource = new MatTableDataSource<Country>(data);
+        this.countryDataSource.paginator = this.paginator;
+        this.countryDataSource.sort = this.sort;
       }
     });
   }
@@ -55,18 +72,10 @@ export class MasterDetailsComponent implements OnInit {
   }
 
   resetExpandableFlags() {
-    this.countries.data.forEach(x => {x.displayDetails = false;});
+    this.countryDataSource.data.forEach(x => { x.displayDetails = false; });
+  }
+
+  ngOnDestroy() {
+    this.searchSubscription.unsubscribe();
   }
 }
-
-// export class CountryDataSource extends DataSource<any> {
-//   constructor(private countryDetailService: CountryDetailService) {
-//     super();
-//   }
-
-//   connect(): Observable<Country[]> {
-//     return this.countryDetailService.getCountries();
-//   }
-
-//   disconnect() {}
-// }

@@ -13,3 +13,8 @@ export class Language {
     name: string;
     nativeName: string;
 }
+
+export class CountrySearchCriteria {
+    countryName: string;
+    population: number;
+}

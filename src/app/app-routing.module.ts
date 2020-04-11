@@ -1,21 +1,11 @@
-import { Routes, RouterModule } from '@angular/router';
-import { NgModule } from '@angular/core';
-import { MasterDetailsComponent } from './master-details/master-details.component';
+import { Routes, } from '@angular/router';
+import { AppHomeComponent } from './home/app-home.component';
 
 export const routes: Routes = [
-  { path: 'masterdetails', component: MasterDetailsComponent },
+  { path: 'masterdetails', component: AppHomeComponent },
   { path: '',
     redirectTo: '/masterdetails',
     pathMatch: 'full'
   },  
-  { path: '**', component: MasterDetailsComponent }
+  { path: '**', component: AppHomeComponent }
 ];
-
-// @NgModule({
-//   imports: [
-//     RouterModule.forRoot(routes)
-//   ],
-//   exports: [RouterModule],
-//   providers: []
-// })
-// export class AppRoutingModule { }
