@@ -1,3 +1,8 @@
+<mat-form-field class="example-full-width">
+  <input matInput placeholder="Global Filter" (keyup)="applyFilter('Global', $event.target.value)">
+</mat-form-field>
+
+
 <mat-table [dataSource]="countryDataSource" matSort class="mat-elevation-z8 parent-table" multiTemplateDataRows>
   <ng-container matColumnDef="flag">
     <mat-header-cell *matHeaderCellDef> Flag </mat-header-cell>
@@ -8,7 +13,10 @@
 
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Country Name </mat-header-cell>
-    <mat-cell *matCellDef="let element"><mat-icon>chevron_right</mat-icon> <mat-checkbox>{{element.name}}</mat-checkbox></mat-cell>
+    <mat-cell *matCellDef="let element">
+      <mat-icon>chevron_right</mat-icon>
+      <mat-checkbox>{{element.name}}</mat-checkbox>
+    </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="capital">
@@ -29,13 +37,40 @@
   <ng-container matColumnDef="expandedDetail">
     <mat-cell *matCellDef="let detail">
       <div style="width: 100%;margin:10px 50px;">
-      <ng-container matColumnDef="expandedDetail" *ngTemplateOutlet="nestedTable; context: { datasource: detail.languages }">
-      </ng-container>
-    </div>
+        <ng-container matColumnDef="expandedDetail"
+          *ngTemplateOutlet="nestedTable; context: { datasource: detail.languages }">
+        </ng-container>
+      </div>
     </mat-cell>
   </ng-container>
 
+  <ng-container matColumnDef="nameFilter">
+    <mat-header-cell *matHeaderCellDef> <input class="filter-textbox" matInput placeholder="Filter by Name"
+        (keyup)="applyFilter('name', $event.target.value)"> </mat-header-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="capitalFilter">
+    <mat-header-cell *matHeaderCellDef> <input class="filter-textbox" matInput placeholder="Filter by Capital"
+        (keyup)="applyFilter('capital', $event.target.value)"> </mat-header-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="regionFilter">
+    <mat-header-cell *matHeaderCellDef> <input class="filter-textbox" matInput placeholder="Filter by Region"
+        (keyup)="applyFilter('region', $event.target.value)"> </mat-header-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="populationFilter">
+    <mat-header-cell *matHeaderCellDef> <input class="filter-textbox" matInput placeholder="Filter by Population"
+        (keyup)="applyFilter('population', $event.target.value)"> </mat-header-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="emptyHeader">
+    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+  </ng-container>
+
   <mat-header-row *matHeaderRowDef="countryColumns"></mat-header-row>
+  <mat-header-row *matHeaderRowDef="['nameFilter','capitalFilter','regionFilter','populationFilter','emptyHeader']">
+  </mat-header-row>
   <mat-row *matRowDef="let row; columns: countryColumns;" matRipple class="element-row"
     [class.expanded]="row.displayDetails" (click)="setDetailRow(row, !row.displayDetails)"></mat-row>
 
@@ -53,19 +88,21 @@
 
     <ng-container matColumnDef="actionColumn">
       <mat-header-cell *matHeaderCellDef></mat-header-cell>
-      <mat-cell *matCellDef="let element"><mat-checkbox></mat-checkbox></mat-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-checkbox></mat-checkbox>
+      </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="iso639_2">
       <mat-header-cell *matHeaderCellDef> Code </mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.iso639_2}}</mat-cell>
     </ng-container>
-  
+
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
     </ng-container>
-  
+
     <ng-container matColumnDef="nativeName">
       <mat-header-cell *matHeaderCellDef> Native Name </mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.nativeName}}</mat-cell>

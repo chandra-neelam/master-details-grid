@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { trigger, style, state, animate, transition } from '@angular/animations';
 import { CountrySearchService } from '../services/country-search.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'master-details',
@@ -29,6 +30,9 @@ export class MasterDetailsComponent implements OnInit, OnDestroy {
   countryDataSource: MatTableDataSource<Country>;
   countries: Array<Country>;
   searchSubscription: Subscription;
+
+  searchTerm = new FormControl('', []);
+  filters: any;
 
   constructor(private countryDetailService: CountryDetailService,
     private countrySearchService: CountrySearchService) {
@@ -59,6 +63,7 @@ export class MasterDetailsComponent implements OnInit, OnDestroy {
         this.countryDataSource = new MatTableDataSource<Country>(data);
         this.countryDataSource.paginator = this.paginator;
         this.countryDataSource.sort = this.sort;
+        this.countryDataSource.filterPredicate = this.filterPredicate;
       }
     });
   }
@@ -73,6 +78,63 @@ export class MasterDetailsComponent implements OnInit, OnDestroy {
 
   resetExpandableFlags() {
     this.countryDataSource.data.forEach(x => { x.displayDetails = false; });
+  }
+
+  applyFilter(columnName: string, filterValue: string) {
+    this.resetExpandableFlags();
+
+    this.filters = {
+      ...this.filters,
+      [columnName]: filterValue.trim().toLowerCase()
+    };
+
+    if (!filterValue) delete this.filters[columnName];
+
+    this.countryDataSource.filter = JSON.stringify(this.filters);
+    if (this.countryDataSource.paginator) {
+      this.countryDataSource.paginator.firstPage();
+    }
+  }
+
+  filterPredicate(data: Country, filters: string) {
+    let validGlobal = true;
+    let mainGridColumns = ['name', 'capital', 'region', 'population'];
+    let nestedGridColumns = ['name', 'iso639_2'];
+
+    // [1] Parse Filters
+    const parsedFilters = JSON.parse(filters);
+    let filterColumns = Object.keys(parsedFilters);
+
+    // [2] Check Global Filter Valid
+    if (filterColumns.includes('Global')) {
+      let globalFilterValue = parsedFilters['Global'];
+
+      validGlobal = mainGridColumns
+        .map(column => data[column] && data[column].toString().toLowerCase().includes(globalFilterValue))
+        .reduce((acc: boolean, curr: boolean) => acc = (curr || acc), false);
+
+      if (!validGlobal && data.languages && data.languages.length > 0) {
+        validGlobal = data.languages
+          .map(lan => nestedGridColumns
+            .map(column => lan[column] && lan[column].toString().toLowerCase().includes(globalFilterValue))
+            .reduce((acc: boolean, curr: boolean) => acc = (curr || acc), false))
+          .reduce((acc: boolean, curr: boolean) => acc = (curr || acc), false);
+      }
+    }
+
+    // [3] Remove Global filter if exists
+    const index = filterColumns.indexOf('Global', 0);
+    if (index > -1) {
+      filterColumns.splice(index, 1);
+    }
+
+    // [4] Check Individual Filter Valid
+    var validIndividual = filterColumns
+      .map(column => data[column] && data[column].toString().toLowerCase().includes(parsedFilters[column]))
+      .reduce((acc: boolean, curr: boolean) => acc = (curr && acc), true);
+
+    // [5] Apply Both filters
+    return validGlobal && validIndividual;
   }
 
   ngOnDestroy() {
