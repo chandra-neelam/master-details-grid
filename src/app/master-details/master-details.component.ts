@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { CountryDetailService } from '../services/country-detail.service';
-import { Country, CountrySearchCriteria } from '../model/country-model';
+import { Country, CountrySearchCriteria, Language } from '../model/country-model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
@@ -33,6 +33,7 @@ export class MasterDetailsComponent implements OnInit, OnDestroy {
 
   searchTerm = new FormControl('', []);
   filters: any;
+  globalFilter: string = '';
 
   constructor(private countryDetailService: CountryDetailService,
     private countrySearchService: CountrySearchService) {
@@ -135,6 +136,14 @@ export class MasterDetailsComponent implements OnInit, OnDestroy {
 
     // [5] Apply Both filters
     return validGlobal && validIndividual;
+  }
+
+  filterLanguages(languages: Array<Language>, globalFilter: string) {
+    globalFilter = globalFilter.toLowerCase();
+    return languages.filter(x => globalFilter == "" ||
+                                 x.iso639_2.toString().toLowerCase().includes(globalFilter) || 
+                                 x.name.toString().toLowerCase().includes(globalFilter) ||
+                                 x.nativeName.toString().toLowerCase().includes(globalFilter));
   }
 
   ngOnDestroy() {

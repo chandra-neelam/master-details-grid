@@ -1,9 +1,10 @@
 <mat-form-field class="example-full-width">
-  <input matInput placeholder="Global Filter" (keyup)="applyFilter('Global', $event.target.value)">
+  <input matInput [(ngModel)]="globalFilter" placeholder="Global Filter" (keyup)="applyFilter('Global', $event.target.value)">
 </mat-form-field>
 
 
 <mat-table [dataSource]="countryDataSource" matSort class="mat-elevation-z8 parent-table" multiTemplateDataRows>
+
   <ng-container matColumnDef="flag">
     <mat-header-cell *matHeaderCellDef> Flag </mat-header-cell>
     <mat-cell *matCellDef="let element">
@@ -38,7 +39,7 @@
     <mat-cell *matCellDef="let detail">
       <div style="width: 100%;margin:10px 50px;">
         <ng-container matColumnDef="expandedDetail"
-          *ngTemplateOutlet="nestedTable; context: { datasource: detail.languages }">
+          *ngTemplateOutlet="nestedTable; context: { datasource: filterLanguages(detail.languages, globalFilter) }">
         </ng-container>
       </div>
     </mat-cell>
@@ -69,8 +70,10 @@
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="countryColumns"></mat-header-row>
+
   <mat-header-row *matHeaderRowDef="['nameFilter','capitalFilter','regionFilter','populationFilter','emptyHeader']">
   </mat-header-row>
+
   <mat-row *matRowDef="let row; columns: countryColumns;" matRipple class="element-row"
     [class.expanded]="row.displayDetails" (click)="setDetailRow(row, !row.displayDetails)"></mat-row>
 
